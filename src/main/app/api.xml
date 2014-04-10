@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd" version="EE-3.5.0">
+    
+    <db:mysql-config name="MySQL_Configuration" host="mule-demo-repository.cdumb7bgzajt.us-east-1.rds.amazonaws.com" port="3306" user="mule" password="Mule1379" database="northwind" doc:name="MySQL Configuration"/>
+    <apikit:config name="api-config" raml="api.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
+    <apikit:mapping-exception-strategy name="api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+    <db:template-query name="Select_Template" doc:name="Template Query">
+        <db:dynamic-query><![CDATA[select * from :tableName limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+    </db:template-query>
+    <flow name="api-main" doc:name="api-main">
+        <http:inbound-endpoint address="http://localhost:8081/api" doc:name="HTTP"/>
+        <apikit:router config-ref="api-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="put:/categories/{category}:api-config" doc:name="put:/categories/{category}:api-config">
+        <db:update config-ref="MySQL_Configuration" doc:name="Update">
+            <db:dynamic-query/>
+        </db:update>
+    </flow>
+    <flow name="put:/customers/{customer}:api-config" doc:name="put:/customers/{customer}:api-config">
+        <db:update config-ref="MySQL_Configuration" doc:name="Update">
+            <db:parameterized-query><![CDATA[update customers set CompanyName = #[json:company], City = #[json:city] where CustomerId = #[customer]]]></db:parameterized-query>
+        </db:update>
+    </flow>
+    <flow name="put:/employees/{employee}:api-config" doc:name="put:/employees/{employee}:api-config">
+        <db:update config-ref="MySQL_Configuration" doc:name="Update">
+            <db:parameterized-query><![CDATA[update employees set FirstName = #[json:firstName], LastName = #[json:lastName] where EmployeeId = #[employee]]]></db:parameterized-query>
+        </db:update>
+    </flow>
+    <flow name="put:/orders/{order}:api-config" doc:name="put:/orders/{order}:api-config">
+        <db:update config-ref="MySQL_Configuration" doc:name="Update">
+            <db:parameterized-query><![CDATA[update xxx set xxx = #[payload] where xxx = #[xxx]]]></db:parameterized-query>
+        </db:update>
+    </flow>
+    <flow name="put:/products/{product}:api-config" doc:name="put:/products/{product}:api-config">
+        <db:update config-ref="MySQL_Configuration" doc:name="Update">
+            <db:parameterized-query><![CDATA[update xxx set xxx = #[payload] where xxx = #[xxx]]]></db:parameterized-query>
+        </db:update>
+    </flow>
+    <flow name="put:/regions/{region}:api-config" doc:name="put:/regions/{region}:api-config">
+        <db:update config-ref="MySQL_Configuration" doc:name="Update">
+            <db:parameterized-query><![CDATA[update xxx set xxx = #[payload] where xxx = #[xxx]]]></db:parameterized-query>
+        </db:update>
+    </flow>
+    <flow name="put:/shippers/{shipper}:api-config" doc:name="put:/shippers/{shipper}:api-config">
+        <db:update config-ref="MySQL_Configuration" doc:name="Update">
+            <db:parameterized-query><![CDATA[update xxx set xxx = #[payload] where xxx = #[xxx]]]></db:parameterized-query>
+        </db:update>
+    </flow>
+    <flow name="put:/suppliers/{supplier}:api-config" doc:name="put:/suppliers/{supplier}:api-config">
+        <db:update config-ref="MySQL_Configuration" doc:name="Update">
+            <db:parameterized-query><![CDATA[update xxx set xxx = #[payload] where xxx = #[xxx]]]></db:parameterized-query>
+        </db:update>
+    </flow>
+    <flow name="put:/territories/{territory}:api-config" doc:name="put:/territories/{territory}:api-config">
+        <db:update config-ref="MySQL_Configuration" doc:name="Update">
+            <db:parameterized-query><![CDATA[update territories set TerritoryDescription = #[payload] where TerritoryId = #[territory]]]></db:parameterized-query>
+        </db:update>
+    </flow>
+    <flow name="get:/shippers:api-config" doc:name="get:/shippers:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:template-query-ref name="Select_Template"/>
+            <db:in-param name="tableName" value="Shippers"/>
+        </db:select>
+    </flow>
+    <flow name="get:/orders:api-config" doc:name="get:/orders:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Orders limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/suppliers:api-config" doc:name="get:/suppliers:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Suppliers limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/territories:api-config" doc:name="get:/territories:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Territories limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/products:api-config" doc:name="get:/products:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Products limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/categories:api-config" doc:name="get:/categories:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Categories limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/employees:api-config" doc:name="get:/employees:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Employees limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/regions:api-config" doc:name="get:/regions:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Regions limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/customers:api-config" doc:name="get:/customers:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Customers limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/categories/{category}:api-config" doc:name="get:/categories/{category}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:parameterized-query><![CDATA[select * from Categories where CategoryId = #[category]]]></db:parameterized-query>
+        </db:select>
+    </flow>
+    <flow name="get:/categories/{category}/products:api-config" doc:name="get:/categories/{category}/products:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from products where CategoryId = #[category] limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/customers/{customer}:api-config" doc:name="get:/customers/{customer}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:parameterized-query><![CDATA[select * from Customers where CustomerId = #[customer]]]></db:parameterized-query>
+        </db:select>
+    </flow>
+    <flow name="get:/customers/{customer}/orders:api-config" doc:name="get:/customers/{customer}/orders:api-config">
+        <db:insert config-ref="MySQL_Configuration" doc:name="Select" autoGeneratedKeys="true">
+            <db:parameterized-query><![CDATA[{ call CustOrderHist(:id) }]]></db:parameterized-query>
+        </db:insert>
+        <set-payload value="#[payload.resultSet1]" doc:name="ResultSet1"/>
+        
+    </flow>
+    <flow name="get:/employees/{employee}:api-config" doc:name="get:/employees/{employee}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:parameterized-query><![CDATA[select * from Employees where EmployeeId = #[employee]]]></db:parameterized-query>
+        </db:select>
+    </flow>
+    <flow name="get:/employees/{employee}/territories:api-config" doc:name="get:/employees/{employee}/territories:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Territories t, EmployeeTerritories et where et.EmployeeId = #[employee]  limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/orders/{order}:api-config" doc:name="get:/orders/{order}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:parameterized-query><![CDATA[select * from Orders where OrderId = #[order]]]></db:parameterized-query>
+        </db:select>
+    </flow>
+    <flow name="get:/orders/{order}/products:api-config" doc:name="get:/orders/{order}/products:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from [Order Details] where orderId = #[order] limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/products/{product}:api-config" doc:name="get:/products/{product}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:parameterized-query><![CDATA[select * from [Order Details] o, products p where o.productId = #[product] and p.productId = #[product]]]></db:parameterized-query>
+        </db:select>
+    </flow>
+    <flow name="get:/products/{product}/orders:api-config" doc:name="get:/products/{product}/orders:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from [Order Details] o where o.productId = #[product] limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/regions/{region}:api-config" doc:name="get:/regions/{region}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:parameterized-query><![CDATA[select * from Region where regionId = #[region]]]></db:parameterized-query>
+        </db:select>
+    </flow>
+    <flow name="get:/regions/{region}/territories:api-config" doc:name="get:/regions/{region}/territories:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Territories where regionId = #[region] limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="get:/shippers/{shipper}:api-config" doc:name="get:/shippers/{shipper}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:parameterized-query><![CDATA[select * from Shippers where ShipperId = #[shipper]]]></db:parameterized-query>
+        </db:select>
+    </flow>
+    <flow name="get:/suppliers/{supplier}:api-config" doc:name="get:/suppliers/{supplier}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:parameterized-query><![CDATA[select * from Suppliers where SupplierId = #[supplier]]]></db:parameterized-query>
+        </db:select>
+    </flow>
+    <flow name="get:/territories/{territory}:api-config" doc:name="get:/territories/{territory}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:parameterized-query><![CDATA[select * from Territories where TerritoryId = #[territory]]]></db:parameterized-query>
+        </db:select>
+    </flow>
+    <flow name="get:/territories/{territory}/employees:api-config" doc:name="get:/territories/{territory}/employees:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Select">
+            <db:dynamic-query><![CDATA[select * from Employees e, EmployeeTerritories et where et.territoryId = #[territory] and et.employeeId = e.EmployeeId limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]]]></db:dynamic-query>
+        </db:select>
+    </flow>
+    <flow name="post:/regions:api-config" doc:name="post:/regions:api-config">
+        <db:insert config-ref="MySQL_Configuration" doc:name="Select">
+            <db:parameterized-query><![CDATA[insert into Region (RegionDescription) values (#[payload])]]></db:parameterized-query>
+        </db:insert>
+    </flow>
+    <flow name="post:/customers:api-config" doc:name="post:/customers:api-config">
+        <db:insert config-ref="MySQL_Configuration" doc:name="Insert">
+            <db:parameterized-query><![CDATA[insert into Customers (CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax) values (#[json:companyName], #[json:contactName], #[json:contactTitle], #[json:address], #[json:city], #[json:region], #[json:postalCode], #[json:country], #[phone], #[fax])]]></db:parameterized-query>
+        </db:insert>
+    </flow>
+    <flow name="post:/orders:api-config" doc:name="post:/orders:api-config">
+        <db:insert config-ref="MySQL_Configuration" doc:name="Insert">
+            <db:parameterized-query><![CDATA[insert into Orders (OrderDate) values (#[json:date])]]></db:parameterized-query>
+        </db:insert>
+    </flow>
+    <flow name="post:/suppliers:api-config" doc:name="post:/suppliers:api-config">
+        <db:insert config-ref="MySQL_Configuration" doc:name="Insert">
+            <db:parameterized-query><![CDATA[insert into Suppliers (CompanyName) values (#[json:name])]]></db:parameterized-query>
+        </db:insert>
+    </flow>
+    <flow name="post:/territories:api-config" doc:name="post:/territories:api-config">
+        <db:insert config-ref="MySQL_Configuration" doc:name="Insert">
+            <db:parameterized-query><![CDATA[insert into Territories (TerritoryId, TerritoryDescription, RegionId) values (#[json:id], #[json:description], #[json:region])]]></db:parameterized-query>
+        </db:insert>
+    </flow>
+    <flow name="post:/shippers:api-config" doc:name="post:/shippers:api-config">
+        <db:insert config-ref="MySQL_Configuration" doc:name="Insert">
+            <db:parameterized-query><![CDATA[insert into Shippers (CompanyName, Phone) values (#[json:name], #[json:phone])]]></db:parameterized-query>
+        </db:insert>
+    </flow>
+    <flow name="post:/products:api-config" doc:name="post:/products:api-config">
+        <db:insert config-ref="MySQL_Configuration" doc:name="Insert" autoGeneratedKeys="true" autoGeneratedKeysColumnNames="CustomerId">
+            <db:parameterized-query><![CDATA[insert into Products (ProductName) values (#[json:name])]]></db:parameterized-query>
+        </db:insert>
+    </flow>
+    <flow name="post:/categories:api-config" doc:name="post:/categories:api-config">
+        <db:insert config-ref="MySQL_Configuration" doc:name="Insert">
+            <db:parameterized-query><![CDATA[insert into Categories (CategoryName) values (#[json:name])]]></db:parameterized-query>
+        </db:insert>
+    </flow>
+    <flow name="post:/employees:api-config" doc:name="post:/employees:api-config">
+        <db:insert config-ref="MySQL_Configuration" doc:name="Insert">
+            <db:parameterized-query><![CDATA[insert into Employees (LastName, FirstName, Notes) values (#[json:lastName], #[json:firstName], #[json:notes])]]></db:parameterized-query>
+        </db:insert>
+    </flow>
+</mule>

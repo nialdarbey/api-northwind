@@ -1,0 +1,1582 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="api">
+    <global-element name="MySQL Configuration" type="http://www.mulesoft.org/schema/mule/db/mysql-config" entity-id="MySQL Configuration#1">
+        <properties>
+            <property name="port" value="3306"/>
+            <property name="host" value="mule-demo-repository.cdumb7bgzajt.us-east-1.rds.amazonaws.com"/>
+            <property name="auxiliary;metauseMetaData"/>
+            <property name="driverClassName"/>
+            <property name="loginTimeout"/>
+            <property name="transactionIsolation"/>
+            <property name="password" value="Mule1379"/>
+            <property name="database" value="northwind"/>
+            <property name="url"/>
+            <property name="dataSource-ref"/>
+            <property name="name" value="MySQL_Configuration"/>
+            <property name="databaseParametersConf"/>
+            <property name="springBeanConf"/>
+            <property name="useXaTransactions"/>
+            <property name="databaseURLConf"/>
+            <property name="user" value="mule"/>
+            <property name="auxiliary;index" value="1"/>
+        </properties>
+    </global-element>
+    <global-element name="Router" type="http://www.mulesoft.org/schema/mule/apikit/config" entity-id="Router#1">
+        <properties>
+            <property name="consoleEnabled" value="true"/>
+            <property name="raml" value="api.raml"/>
+            <property name="flow-mapping"/>
+            <property name="consolePath" value="console"/>
+            <property name="name" value="api-config"/>
+            <property name="auxiliary;index" value="2"/>
+        </properties>
+    </global-element>
+    <global-unknown description="false" unknownName="api-apiKitGlobalExceptionMapping" index="3" entity-id="global-unknown#1">
+        <content>&lt;apikit:mapping-exception-strategy xmlns:apikit=&quot;http://www.mulesoft.org/schema/mule/apikit&quot; name=&quot;api-apiKitGlobalExceptionMapping&quot;&gt;
+        &lt;apikit:mapping statusCode=&quot;404&quot;&gt;
+            &lt;apikit:exception value=&quot;org.mule.module.apikit.exception.NotFoundException&quot;/&gt;
+            &lt;set-property xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; propertyName=&quot;Content-Type&quot; value=&quot;application/json&quot;/&gt;
+            &lt;set-payload xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; value=&quot;{ &amp;quot;message&amp;quot;: &amp;quot;Resource not found&amp;quot; }&quot;/&gt;
+        &lt;/apikit:mapping&gt;
+        &lt;apikit:mapping statusCode=&quot;405&quot;&gt;
+            &lt;apikit:exception value=&quot;org.mule.module.apikit.exception.MethodNotAllowedException&quot;/&gt;
+            &lt;set-property xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; propertyName=&quot;Content-Type&quot; value=&quot;application/json&quot;/&gt;
+            &lt;set-payload xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; value=&quot;{ &amp;quot;message&amp;quot;: &amp;quot;Method not allowed&amp;quot; }&quot;/&gt;
+        &lt;/apikit:mapping&gt;
+        &lt;apikit:mapping statusCode=&quot;415&quot;&gt;
+            &lt;apikit:exception value=&quot;org.mule.module.apikit.exception.UnsupportedMediaTypeException&quot;/&gt;
+            &lt;set-property xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; propertyName=&quot;Content-Type&quot; value=&quot;application/json&quot;/&gt;
+            &lt;set-payload xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; value=&quot;{ &amp;quot;message&amp;quot;: &amp;quot;Unsupported media type&amp;quot; }&quot;/&gt;
+        &lt;/apikit:mapping&gt;
+        &lt;apikit:mapping statusCode=&quot;406&quot;&gt;
+            &lt;apikit:exception value=&quot;org.mule.module.apikit.exception.NotAcceptableException&quot;/&gt;
+            &lt;set-property xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; propertyName=&quot;Content-Type&quot; value=&quot;application/json&quot;/&gt;
+            &lt;set-payload xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; value=&quot;{ &amp;quot;message&amp;quot;: &amp;quot;Not acceptable&amp;quot; }&quot;/&gt;
+        &lt;/apikit:mapping&gt;
+        &lt;apikit:mapping statusCode=&quot;400&quot;&gt;
+            &lt;apikit:exception value=&quot;org.mule.module.apikit.exception.BadRequestException&quot;/&gt;
+            &lt;set-property xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; propertyName=&quot;Content-Type&quot; value=&quot;application/json&quot;/&gt;
+            &lt;set-payload xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; value=&quot;{ &amp;quot;message&amp;quot;: &amp;quot;Bad request&amp;quot; }&quot;/&gt;
+        &lt;/apikit:mapping&gt;
+    &lt;/apikit:mapping-exception-strategy&gt;</content>
+    </global-unknown>
+    <global-element name="Template Query" type="http://www.mulesoft.org/schema/mule/db/template-query" entity-id="Template Query#1">
+        <properties>
+            <property name="statement"/>
+            <property name="userGeneratedSQL"/>
+            <property name="auxiliary;metatype-attribute" value="text"/>
+            <property name="name" value="Select_Template"/>
+            <property name="fromFile"/>
+            <property name="auxiliary;index" value="24"/>
+            <property name="auxiliary;metametadataStrategy" value="new-database-dynamic-statement-metadata-strategy"/>
+            <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                <property name="text" value="select * from :tableName limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                <property name="isProcessed$$$$ " value="true"/>
+                <property name="auxiliary;index" value="25"/>
+                <property name="auxiliary;wrapIn" value="25"/>
+            </property-collection>
+        </properties>
+    </global-element>
+    <flow SubFlow="false" name="api-main" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="ed4a5750-005c-44b6-b6c6-dac7bf189cdf">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="26"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#1">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <endpoint direction="Inbound" name="HTTP" type="http://www.mulesoft.org/schema/mule/http/endpoint" entity-id="HTTP#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="port"/>
+                    <property name="host"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="followRedirects"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/http/endpoint"/>
+                    <property name="keep-alive"/>
+                    <property name="contentType"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="password"/>
+                    <property name="exchange-pattern"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="httpLabel"/>
+                    <property name="address" value="http://localhost:8081/api"/>
+                    <property name="path"/>
+                    <property name="encoding"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="method"/>
+                    <property name="user"/>
+                    <property name="auxiliary;index" value="27"/>
+                    <property name="responseTimeout"/>
+                    <property name="mimeType"/>
+                    <property name="connector-ref"/>
+                </properties>
+            </endpoint>
+            <pattern name="APIkit Router" type="http://www.mulesoft.org/schema/mule/apikit/router" entity-id="APIkit Router#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="config-ref" value="api-config"/>
+                    <property name="auxiliary;index" value="28"/>
+                </properties>
+                <description></description>
+            </pattern>
+            <pattern name="Reference Exception Strategy" type="http://www.mulesoft.org/schema/mule/core/exception-strategy" entity-id="Reference Exception Strategy#1">
+                <properties>
+                    <property name="ref" value="api-apiKitGlobalExceptionMapping"/>
+                    <property name="auxiliary;index" value="29"/>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="put:/categories/{category}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="847a1a5d-e71f-48a5-839c-b4f6ce8b1763">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="30"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#2">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Update" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="auxiliary;metatype-attribute" value="text"/>
+                    <property name="source" value=""/>
+                    <property name="updated"/>
+                    <property name="statementFactory-ref" value=""/>
+                    <property name="transactionalAction" value="JOIN_IF_POSSIBLE"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/update"/>
+                    <property name="target" value=""/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="31"/>
+                    <property name="auxiliary;metametadataStrategy" value="new-database-dynamic-statement-metadata-strategy"/>
+                    <property name="bulkMode" value="false"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value=""/>
+                    </property-collection>
+                </properties>
+                <description></description>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="put:/customers/{customer}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="10147664-ccf0-42e1-b7b9-9a8856919eac">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="33"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#3">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Update" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#2">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/update"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="34"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="update customers set CompanyName = #[json:company], City = #[json:city] where CustomerId = #[customer]"/>
+                        <property name="auxiliary;index" value="35"/>
+                        <property name="auxiliary;wrapIn" value="35"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="put:/employees/{employee}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="f75e3742-e4ac-4a79-a57a-a9ab09e026fe">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="36"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#4">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Update" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#3">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/update"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="37"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="update employees set FirstName = #[json:firstName], LastName = #[json:lastName] where EmployeeId = #[employee]"/>
+                        <property name="auxiliary;index" value="38"/>
+                        <property name="auxiliary;wrapIn" value="38"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="put:/orders/{order}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="07b8a3bf-7d4e-433f-bad4-347b24338d37">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="39"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#5">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Update" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#4">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/update"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="40"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="update xxx set xxx = #[payload] where xxx = #[xxx]"/>
+                        <property name="auxiliary;index" value="41"/>
+                        <property name="auxiliary;wrapIn" value="41"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="put:/products/{product}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="310acb56-6416-4061-9dfa-0a7fa34f54ce">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="42"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#6">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Update" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#5">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/update"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="43"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="update xxx set xxx = #[payload] where xxx = #[xxx]"/>
+                        <property name="auxiliary;index" value="44"/>
+                        <property name="auxiliary;wrapIn" value="44"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="put:/regions/{region}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="53db64c3-8fbd-4681-b7bf-99ee3d3cdfd6">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="45"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#7">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Update" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#6">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/update"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="46"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="update xxx set xxx = #[payload] where xxx = #[xxx]"/>
+                        <property name="auxiliary;index" value="47"/>
+                        <property name="auxiliary;wrapIn" value="47"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="put:/shippers/{shipper}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="f4aeb6fb-beb2-423e-99ff-3f412065c5ca">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="48"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#8">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Update" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#7">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/update"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="49"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="update xxx set xxx = #[payload] where xxx = #[xxx]"/>
+                        <property name="auxiliary;index" value="50"/>
+                        <property name="auxiliary;wrapIn" value="50"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="put:/suppliers/{supplier}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="fd7b95d8-97a0-4a34-aca3-667f31ab334b">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="51"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#9">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Update" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#8">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/update"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="52"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="update xxx set xxx = #[payload] where xxx = #[xxx]"/>
+                        <property name="auxiliary;index" value="53"/>
+                        <property name="auxiliary;wrapIn" value="53"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="put:/territories/{territory}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="96ff94ae-a501-4817-881d-dd194e52767b">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="54"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#10">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Update" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#9">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="auxiliary;metatype-attribute" value="text"/>
+                    <property name="source" value=""/>
+                    <property name="updated"/>
+                    <property name="statementFactory-ref" value=""/>
+                    <property name="transactionalAction" value="JOIN_IF_POSSIBLE"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/update"/>
+                    <property name="target" value=""/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="55"/>
+                    <property name="auxiliary;metametadataStrategy" value="new-database-metadata-strategy"/>
+                    <property name="bulkMode" value="false"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="update territories set TerritoryDescription = #[payload] where TerritoryId = #[territory]"/>
+                    </property-collection>
+                </properties>
+                <description></description>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/shippers:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="2f0f18d5-b9d7-4c30-a1f6-606bdc3cdbdf">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="57"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#11">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#10">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="58"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/in-param;0">
+                        <property name="name" value="tableName"/>
+                        <property name="value" value="Shippers"/>
+                        <property name="auxiliary;index" value="60"/>
+                        <property name="auxiliary;wrapIn" value="60"/>
+                    </property-collection>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/template-query-ref;0">
+                        <property name="name" value="Select_Template"/>
+                        <property name="auxiliary;index" value="59"/>
+                        <property name="auxiliary;wrapIn" value="59"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/orders:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="384650aa-28c6-4aa7-a95e-54dd85b4aec1">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="61"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#12">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#11">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="62"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Orders limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="63"/>
+                        <property name="auxiliary;wrapIn" value="63"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/suppliers:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="bfe275ab-b022-425b-b458-36915925ea2d">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="64"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#13">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#12">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="65"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Suppliers limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="66"/>
+                        <property name="auxiliary;wrapIn" value="66"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/territories:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="c38341bc-f891-4fa2-8a19-f4f487975312">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="67"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#14">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#13">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="68"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Territories limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="69"/>
+                        <property name="auxiliary;wrapIn" value="69"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/products:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="27195230-1334-4b43-8417-455bae988d1a">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="70"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#15">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#14">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="71"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Products limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="72"/>
+                        <property name="auxiliary;wrapIn" value="72"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/categories:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="69667973-3380-455c-9d94-dced43d11477">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="73"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#16">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#15">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="74"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Categories limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="75"/>
+                        <property name="auxiliary;wrapIn" value="75"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/employees:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="bfaf75a9-aff1-4c43-a3f1-5769b02d3c6d">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="76"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#17">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#16">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="77"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Employees limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="78"/>
+                        <property name="auxiliary;wrapIn" value="78"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/regions:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="2a8fa3f3-1502-4bb1-8874-8da2201f40cd">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="79"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#18">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#17">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="80"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Regions limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="81"/>
+                        <property name="auxiliary;wrapIn" value="81"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/customers:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="937d5663-ce04-443b-a65f-1ee6c033f2cd">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="82"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#19">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#18">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="83"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Customers limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="84"/>
+                        <property name="auxiliary;wrapIn" value="84"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/categories/{category}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="d65b2a9d-fc22-4ec7-aa54-78563a3680d5">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="85"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#20">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#19">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="86"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="select * from Categories where CategoryId = #[category]"/>
+                        <property name="auxiliary;index" value="87"/>
+                        <property name="auxiliary;wrapIn" value="87"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/categories/{category}/products:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="3068f943-e0e3-4a5b-8b6d-f7b54ef24fa3">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="88"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#21">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#20">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="89"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from products where CategoryId = #[category] limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="90"/>
+                        <property name="auxiliary;wrapIn" value="90"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/customers/{customer}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="1606046e-0e62-497c-afa1-d0b1af910869">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="91"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#22">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#21">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="92"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="select * from Customers where CustomerId = #[customer]"/>
+                        <property name="auxiliary;index" value="93"/>
+                        <property name="auxiliary;wrapIn" value="93"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/customers/{customer}/orders:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="fb9ec71e-e2a3-4397-a36e-51f8ed0c22c9">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="94"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#23">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#22">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="autoGeneratedKeysColumnNames"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/insert"/>
+                    <property name="autoGeneratedKeysColumnIndexes"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="95"/>
+                    <property name="autoGeneratedKeys" value="true"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="{ call CustOrderHist(:id) }"/>
+                        <property name="auxiliary;index" value="96"/>
+                        <property name="auxiliary;wrapIn" value="96"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+            <pattern name="ResultSet1" type="http://www.mulesoft.org/schema/mule/core/set-payload" entity-id="Set Payload#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="value" value="#[payload.resultSet1]"/>
+                    <property name="auxiliary;index" value="97"/>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/employees/{employee}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="5c54570a-3189-4c12-8b24-12feb567aefc">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="98"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#24">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#23">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="99"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="select * from Employees where EmployeeId = #[employee]"/>
+                        <property name="auxiliary;index" value="100"/>
+                        <property name="auxiliary;wrapIn" value="100"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/employees/{employee}/territories:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="0250b0fc-9eff-43de-8bb6-b8529568e3fc">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="101"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#25">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#24">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="102"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Territories t, EmployeeTerritories et where et.EmployeeId = #[employee]  limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="103"/>
+                        <property name="auxiliary;wrapIn" value="103"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/orders/{order}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="874bc11b-5f9a-4193-a974-053e6a84570a">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="104"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#26">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#25">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="105"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="select * from Orders where OrderId = #[order]"/>
+                        <property name="auxiliary;index" value="106"/>
+                        <property name="auxiliary;wrapIn" value="106"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/orders/{order}/products:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="48ab6249-12fe-4acf-8cfb-55bda7141ccb">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="107"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#27">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#26">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="108"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from [Order Details] where orderId = #[order] limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="109"/>
+                        <property name="auxiliary;wrapIn" value="109"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/products/{product}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="dde68dd6-9ac7-449c-85f1-22f76e80a369">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="110"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#28">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#27">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="111"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="select * from [Order Details] o, products p where o.productId = #[product] and p.productId = #[product]"/>
+                        <property name="auxiliary;index" value="112"/>
+                        <property name="auxiliary;wrapIn" value="112"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/products/{product}/orders:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="de2cdd25-2b08-4a2e-9596-e7256fb1b6ec">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="113"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#29">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#28">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="114"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from [Order Details] o where o.productId = #[product] limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="115"/>
+                        <property name="auxiliary;wrapIn" value="115"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/regions/{region}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="e8106c90-fcf7-4b4f-9629-d2d5f534237d">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="116"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#30">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#29">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="117"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="select * from Region where regionId = #[region]"/>
+                        <property name="auxiliary;index" value="118"/>
+                        <property name="auxiliary;wrapIn" value="118"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/regions/{region}/territories:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="3f4d9f08-9864-490f-b5cf-f53ab582c1c1">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="119"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#31">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#30">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="120"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Territories where regionId = #[region] limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="121"/>
+                        <property name="auxiliary;wrapIn" value="121"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/shippers/{shipper}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="a5df5044-5711-4755-ac55-5974260709fc">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="122"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#32">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#31">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="123"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="select * from Shippers where ShipperId = #[shipper]"/>
+                        <property name="auxiliary;index" value="124"/>
+                        <property name="auxiliary;wrapIn" value="124"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/suppliers/{supplier}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="f46ce67c-586d-42a1-8b0a-3a8ee49a7065">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="125"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#33">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#32">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="126"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="select * from Suppliers where SupplierId = #[supplier]"/>
+                        <property name="auxiliary;index" value="127"/>
+                        <property name="auxiliary;wrapIn" value="127"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/territories/{territory}:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="07f633c2-1502-450f-82eb-acd62ba31367">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="128"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#34">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#33">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="129"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="select * from Territories where TerritoryId = #[territory]"/>
+                        <property name="auxiliary;index" value="130"/>
+                        <property name="auxiliary;wrapIn" value="130"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="get:/territories/{territory}/employees:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="2bd8b87f-0bd9-4e38-a263-1aec61aa06bc">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="131"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#35">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#34">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="streaming"/>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="maxRows"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/select"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="132"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/dynamic-query;0">
+                        <property name="text" value="select * from Employees e, EmployeeTerritories et where et.territoryId = #[territory] and et.employeeId = e.EmployeeId limit #[message.inboundProperties.offset],#[message.inboundProperties.pageSize]"/>
+                        <property name="auxiliary;index" value="133"/>
+                        <property name="auxiliary;wrapIn" value="133"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="post:/regions:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="957560a7-47d2-46ed-b7d6-7e6f0f93e5ec">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="134"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#36">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Select" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#35">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="autoGeneratedKeysColumnNames"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/insert"/>
+                    <property name="autoGeneratedKeysColumnIndexes"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="135"/>
+                    <property name="autoGeneratedKeys"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="insert into Region (RegionDescription) values (#[payload])"/>
+                        <property name="auxiliary;index" value="136"/>
+                        <property name="auxiliary;wrapIn" value="136"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="post:/customers:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="7c3743e2-151d-42de-88de-da86d1f42acd">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="137"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#37">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Insert" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#36">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="autoGeneratedKeysColumnNames"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/insert"/>
+                    <property name="autoGeneratedKeysColumnIndexes"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="138"/>
+                    <property name="autoGeneratedKeys"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="insert into Customers (CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax) values (#[json:companyName], #[json:contactName], #[json:contactTitle], #[json:address], #[json:city], #[json:region], #[json:postalCode], #[json:country], #[phone], #[fax])"/>
+                        <property name="auxiliary;index" value="139"/>
+                        <property name="auxiliary;wrapIn" value="139"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="post:/orders:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="fe725f0d-329a-40d1-a166-f63e61e00d0d">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="140"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#38">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Insert" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#37">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="autoGeneratedKeysColumnNames"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/insert"/>
+                    <property name="autoGeneratedKeysColumnIndexes"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="141"/>
+                    <property name="autoGeneratedKeys"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="insert into Orders (OrderDate) values (#[json:date])"/>
+                        <property name="auxiliary;index" value="142"/>
+                        <property name="auxiliary;wrapIn" value="142"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="post:/suppliers:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="0c358699-cfcc-4273-8b8b-e57e697c5b85">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="143"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#39">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Insert" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#38">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="autoGeneratedKeysColumnNames"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/insert"/>
+                    <property name="autoGeneratedKeysColumnIndexes"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="144"/>
+                    <property name="autoGeneratedKeys"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="insert into Suppliers (CompanyName) values (#[json:name])"/>
+                        <property name="auxiliary;index" value="145"/>
+                        <property name="auxiliary;wrapIn" value="145"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="post:/territories:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="72f34958-bb3f-4843-87dd-dd05793ecb4a">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="146"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#40">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Insert" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#39">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="autoGeneratedKeysColumnNames"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/insert"/>
+                    <property name="autoGeneratedKeysColumnIndexes"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="147"/>
+                    <property name="autoGeneratedKeys"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="insert into Territories (TerritoryId, TerritoryDescription, RegionId) values (#[json:id], #[json:description], #[json:region])"/>
+                        <property name="auxiliary;index" value="148"/>
+                        <property name="auxiliary;wrapIn" value="148"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="post:/shippers:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="13f02039-531e-479c-82b9-14521fa05cb8">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="149"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#41">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Insert" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#40">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="autoGeneratedKeysColumnNames"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/insert"/>
+                    <property name="autoGeneratedKeysColumnIndexes"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="150"/>
+                    <property name="autoGeneratedKeys"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="insert into Shippers (CompanyName, Phone) values (#[json:name], #[json:phone])"/>
+                        <property name="auxiliary;index" value="151"/>
+                        <property name="auxiliary;wrapIn" value="151"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="post:/products:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="d0bfc9b4-f945-478b-8155-1fb62e86194f">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="152"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#42">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Insert" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#41">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="autoGeneratedKeysColumnNames" value="CustomerId"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/insert"/>
+                    <property name="autoGeneratedKeysColumnIndexes"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="153"/>
+                    <property name="autoGeneratedKeys" value="true"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="insert into Products (ProductName) values (#[json:name])"/>
+                        <property name="auxiliary;index" value="154"/>
+                        <property name="auxiliary;wrapIn" value="154"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="post:/categories:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="134e6c6e-f9bc-4dc5-80e4-7e228d3e70f8">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="155"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#43">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Insert" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#42">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="autoGeneratedKeysColumnNames"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/insert"/>
+                    <property name="autoGeneratedKeysColumnIndexes"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="156"/>
+                    <property name="autoGeneratedKeys"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="insert into Categories (CategoryName) values (#[json:name])"/>
+                        <property name="auxiliary;index" value="157"/>
+                        <property name="auxiliary;wrapIn" value="157"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="post:/employees:api-config" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="70e0c771-8610-4893-9d06-5cdbbaee937a">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="158"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#44">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Insert" type="http://www.mulesoft.org/schema/mule/db/database-connector" entity-id="Database#43">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name=""/>
+                    <property name="source"/>
+                    <property name="autoGeneratedKeysColumnNames"/>
+                    <property name="statementFactory-ref"/>
+                    <property name="transactionalAction"/>
+                    <property name="target"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/db/insert"/>
+                    <property name="autoGeneratedKeysColumnIndexes"/>
+                    <property name="config-ref" value="MySQL_Configuration"/>
+                    <property name="auxiliary;index" value="159"/>
+                    <property name="autoGeneratedKeys"/>
+                    <property name="bulkMode"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/db/parameterized-query;0">
+                        <property name="text" value="insert into Employees (LastName, FirstName, Notes) values (#[json:lastName], #[json:firstName], #[json:notes])"/>
+                        <property name="auxiliary;index" value="160"/>
+                        <property name="auxiliary;wrapIn" value="160"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <description></description>
+</mule-configuration>

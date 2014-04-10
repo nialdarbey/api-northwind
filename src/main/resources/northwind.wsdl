@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:db="http://www.mulesoft.com/anypoint/db/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DBService" targetNamespace="http://www.mulesoft.com/anypoint/db/">
+	<wsdl:import namespace="" location="./hospital-information.xsd"/>
+  <wsdl:message name="InsertRequest">
+    <wsdl:part element="db:InsertRequest" name="insertRequest"/>
+  </wsdl:message>
+  <wsdl:message name="InsertResponse">
+    <wsdl:part element="db:InsertResponse" name="insertResponse"/>
+  </wsdl:message>
+  <wsdl:message name="SelectRequest">
+    <wsdl:part element="db:InsertRequest" name="selectRequest"/>
+  </wsdl:message>
+  <wsdl:message name="SelectResponse">
+    <wsdl:part element="db:InsertResponse" name="selectResponse"/>
+  </wsdl:message>
+  <wsdl:message name="UpdateRequest">
+    <wsdl:part element="db:UpdateRequest" name="updateRequest"/>
+  </wsdl:message>
+  <wsdl:message name="UpdateResponse">
+    <wsdl:part element="db:UpdateResponse" name="updateResponse"/>
+  </wsdl:message>
+  <wsdl:portType name="DBPortType">
+    <wsdl:operation name="insert">
+      <wsdl:input message="db:InsertRequest"/>
+      <wsdl:output message="db:InsertResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="select">
+      <wsdl:input message="db:SelectRequest"/>
+      <wsdl:output message="db:SelectResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <wsdl:input message="db:UpdateRequest"/>
+      <wsdl:output message="db:UpdateResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DBSoap" type="db:DBPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="insert">
+      <soap:operation soapAction="http://www.mulesoft.com/anypoint/db/insert"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="select">
+      <soap:operation soapAction="http://www.mulesoft.com/anypoint/db/select"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <soap:operation soapAction="http://www.mulesoft.com/anypoint/db/update"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DBService">
+    <wsdl:port binding="db:DBSoap" name="DBSoap">
+      <soap:address location="http://www.mulesoft.com/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

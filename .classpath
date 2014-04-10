@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/*.java" kind="src" path="src/main/app"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry kind="src" path="src/main/api"/>
+	<classpathentry kind="con" path="MULE_RUNTIME"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/nialdarbey/Downloads/AnypointStudio 2/plugins/com.cloveretl.gui_3.4.3.187P/lib/plugins/org.jetel.jdbc/lib/mysql/mysql-connector-java-5.1.22-bin.jar"/>
+	<classpathentry kind="con" path="MULE_LIB/APIkit"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

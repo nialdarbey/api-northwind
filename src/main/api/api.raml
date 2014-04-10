@@ -1,0 +1,94 @@
+#%RAML 0.8
+title: Northwind
+baseUri: http://localhost:8081/api
+traits:
+  - pageable:
+      queryParameters:
+        offset:
+          type: integer
+          minimum: 0
+          example: 0
+          default: 0
+        pageSize:
+          type: integer
+          minimum: 5
+          example: 20
+          default: 10000
+resourceTypes:
+  - document:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+  - read-only-collection:
+      type: document
+      get: 
+        is: [pageable]
+  - collection:
+      type: read-only-collection
+      post:
+        body:
+          application/json:
+        responses:
+          201:
+            headers:
+              Location:
+                required: true
+                type: string
+  - member:
+      type: document
+      put:
+        body:
+          application/json:
+/categories:
+  type: collection
+  /{category}:
+    type: member
+    /products:
+      type: read-only-collection
+/customers:
+  type: collection
+  /{customer}:
+    type: member
+    /orders:
+      type: read-only-collection
+/employees:
+  type: collection
+  /{employee}:
+    type: member
+    /territories:
+      type: read-only-collection
+/orders:
+  type: collection
+  /{order}:
+    type: member
+    /products:
+      type: read-only-collection
+/products:
+  type: collection
+  /{product}:
+    type: member
+    /orders:
+      type: read-only-collection
+/regions:
+  type: collection
+  /{region}:
+    type: member
+    /territories:
+      type: read-only-collection
+/shippers:
+  type: collection
+  /{shipper}:
+    type: member
+/suppliers:
+  type: collection
+  /{supplier}:
+    type: member
+    /products:
+/territories:
+  type: collection
+  /{territory}:
+    type: member
+    /employees:
+      type: read-only-collection
